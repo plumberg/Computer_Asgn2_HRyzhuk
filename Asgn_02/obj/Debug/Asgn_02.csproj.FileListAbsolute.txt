@@ -1,0 +1,7 @@
+C:\Users\hana\source\repos\Asgn_02\Asgn_02\obj\Debug\Asgn_02.csprojAssemblyReference.cache
+C:\Users\hana\source\repos\Asgn_02\Asgn_02\obj\Debug\Asgn_02.csproj.CoreCompileInputs.cache
+C:\Users\hana\source\repos\Asgn_02\Asgn_02\bin\Debug\Asgn_02.exe.config
+C:\Users\hana\source\repos\Asgn_02\Asgn_02\bin\Debug\Asgn_02.exe
+C:\Users\hana\source\repos\Asgn_02\Asgn_02\bin\Debug\Asgn_02.pdb
+C:\Users\hana\source\repos\Asgn_02\Asgn_02\obj\Debug\Asgn_02.exe
+C:\Users\hana\source\repos\Asgn_02\Asgn_02\obj\Debug\Asgn_02.pdb
