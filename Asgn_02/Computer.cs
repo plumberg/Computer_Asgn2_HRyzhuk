@@ -69,12 +69,20 @@ namespace Asgn_02
                 {
                     newRam += 50;
                 }
-                int softCount;
+
                 if (software != null)
-                { 
-                softCount = software.Count(r => r == 1);
-                    if (softCount > 0)
-                        newRam += 10 * softCount;
+                {
+
+                 int softCount = software.Count(r => r> 0);
+                    for (int i = 0; i < softCount; i++) ;
+                    for (int i =0; i< software.Length; i++)
+                    {
+                        if (software[i] > 0)
+                        {
+                            newRam += 10 * (int)software[i];
+                        }
+                    }
+
                 }
                 
 

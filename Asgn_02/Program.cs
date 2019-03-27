@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Linq;
+
 
 namespace Asgn_02
 {
@@ -41,6 +41,10 @@ namespace Asgn_02
             int ram;
             int?[] software;
             int sizeS, soft;
+            int start, end;
+            int yesAntenna;
+            int noAntenna;
+            double percent;
 
             do
             {
@@ -136,7 +140,7 @@ namespace Asgn_02
 
 
                         Console.WriteLine("Extra software? Enter null to skip this option or " +
-                            "number from 1 to 5 for amount of sotware.");
+                            "1 to procedure");
                         input = Console.ReadLine();
                         if (input=="null")
                         {
@@ -146,12 +150,23 @@ namespace Asgn_02
                         {
                                 sizeS = int.Parse(input);
                                 Computers[id - 1].Software = new int?[5];
-                                for (int i = 0; i< sizeS; i++)
+                                for (int i = 0; i< Computers[id-1].Software.Length; i++)
                                 {
-                                Console.WriteLine((i + 1) + " is installed or not? 1 - yes, 0 - no");
-                                soft = Convert.ToInt32(Console.ReadLine());
-                                Computers[id - 1].Software[i] = soft;
-                            }
+                                Console.WriteLine("How many licences would you like for" +
+                                    "Software {0}? Enter 0 if you don't want to purchase any licenses or " +
+                                    "null to skip the installation", (i));
+                                input = Console.ReadLine();
+                                if (input == "null")
+                                {
+                                    Computers[id - 1].Software[i] = null;
+                                }
+                                else
+                                {
+                                    soft = int.Parse(input);
+                                    Computers[id - 1].Software[i] = soft;
+                                }
+                                
+                                }
 
                         }
                      
@@ -240,19 +255,63 @@ namespace Asgn_02
                         Console.WriteLine("Average RAM "+ rm.Average().ToString());
 
                         var ca = Computers.Where(y => y != null).Select(r => r.Antenna).ToList();
-                        int yesAntenna = ca.Where(c =>(bool) c).Count();
-                        int noAntenna = ca.Where(c => !(bool)c).Count();
+                        ca.RemoveAll(y => y == null);
+                        yesAntenna = ca.Where(c =>(bool) c).Count();
+                        noAntenna = ca.Where(c => !(bool)c).Count();
                         Console.WriteLine("Amount of installed antennas {0}\nNot installed antennas {1}", yesAntenna, noAntenna);
-                        //double percent = (yesAntenna / ca.Count) * 100;
-                        //Console.WriteLine("Percentage of installed antennas: %{0}", percent);
+                        percent = (yesAntenna / ca.Count) * 100;
+                        Console.WriteLine("Percentage of installed antennas: %{0}", percent);
 
                         var hd = Computers.Where(y => y != null).Select(l => l.StorageCapacity).ToList();
                         Console.WriteLine("Average Hard Drive Capacity " + hd.Average().ToString());
-                        // Console.WriteLine("Average Software " + Computers.Select(a => a.Software).Average().ToString());
+
+                        //picking new list with for software arrays of computers where software array was not null
+                        var aS =Computers.Where(y => y != null).Select(l => l.Software).ToList();
+
+                     //   Console.WriteLine("Average Software " +aS.Average());
 
                         Console.WriteLine("Cloud Storage {0}\nNetwork Speed {1}", CloudStorage, NetworkSpeed);
                         break;
 
+                    case 10:
+                        //Here, I'm counting all Computers array length since the instructions say to include 
+                        //prototype computer info if there is no user's computer info was entered
+                        Console.WriteLine("Please specify an ARRAY start and stop index (between 0 and {0})" +
+                            "of computers you would like to retrieve info from", Computers.Length-1);
+                        Console.WriteLine("Start from:");
+                        start = Convert.ToInt32(Console.ReadLine());
+                        Console.WriteLine("End at:");
+                        end    = Convert.ToInt32(Console.ReadLine());
+                        int diff = end - start;
+                        var newCompList = new Computer[diff].ToArray();
+                        Array.Copy(Computers, start, newCompList, 0, end-start+1);
+                        // source,source-index,dest,dest-index,count
+                        for (int i = 0; i < newCompList.Length; i++)
+                        {
+                            if (newCompList[i] == null)
+                            {
+                                //Possible default computer:
+                                newCompList[i] = new Computer(i + 1, false, 500, 8000, null);
+                            }
+                        }
+
+                        var nrm = newCompList.Where(y => y != null).Select(r => r.Ram).ToList();
+                        Console.WriteLine("Average RAM " + nrm.Average().ToString());
+
+                        var nca = newCompList.Where(y => y != null).Select(r => r.Antenna).ToList();
+                        nca.RemoveAll(y => y == null);
+                        yesAntenna = nca.Where(c => (bool)c).Count();
+                        noAntenna = nca.Where(c => !(bool)c).Count();
+                        Console.WriteLine("Amount of installed antennas {0}\nNot installed antennas {1}", yesAntenna, noAntenna);
+                        percent = (yesAntenna / nca.Count) * 100;
+                        Console.WriteLine("Percentage of installed antennas: %{0}", percent);
+
+                        var nhd = newCompList.Where(y => y != null).Select(l => l.StorageCapacity).ToList();
+                        Console.WriteLine("Average Hard Drive Capacity " + nhd.Average().ToString());
+                        // Console.WriteLine("Average Software " + Computers.Select(a => a.Software).Average().ToString());
+
+                        Console.WriteLine("Cloud Storage {0}\nNetwork Speed {1}", CloudStorage, NetworkSpeed);
+                        break;
                     default:
                         Environment.Exit(0);
                         break;
