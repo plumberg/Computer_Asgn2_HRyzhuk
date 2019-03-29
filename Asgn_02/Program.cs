@@ -37,9 +37,7 @@ namespace Asgn_02
             string input;
             bool? antenna;
             double? storage_capacity;
-            double outSC;
             int ram;
-            int?[] software;
             int sizeS, soft;
             int start, end;
             int yesAntenna;
@@ -48,7 +46,8 @@ namespace Asgn_02
 
             do
             {
-                Console.WriteLine("1. Add computer\n" +
+                Console.WriteLine("==========MENU==========\n" +
+                    "1. Add computer\n" +
                     "2. Specify Prototype computer\n" +
                     "3. Remove Prototype computer\n" +
                     "4. Upgrade cloud storage\n" +
@@ -64,9 +63,11 @@ namespace Asgn_02
 
                 switch (num)
                 {
+                    /*Unfortunately perator ?? doesnt work with int and <null> together so I used if statements*/
                     case 1:
-                        Console.WriteLine("1. Add Prototype computer\n2. Add default computers");
+                        Console.WriteLine("1. Add Prototype computer\n2. Add default computers for all empty slots");
                         int console = Convert.ToInt32(Console.ReadLine());
+
                         if (console == 2)
                         {
                             for (int i = 0; i < Computers.Length; i++)
@@ -74,7 +75,7 @@ namespace Asgn_02
                                 if (Computers[i] == null)
                                 {
                                     //Possible default computer:
-                                    Computers[i] = new Computer(i+1, false, 500, 8000, null);
+                                    Computers[i] = new Computer(i + 1, false, 500, 8000, null);
                                 }
 
                             }
@@ -87,22 +88,17 @@ namespace Asgn_02
                                 {
                                     //The way of implementing depends on constructor in Computer
                                     // Computers[i] = new Computer(i + 1, null, null, 1000, null);
-                                    
-                                    Computers[i] = new Computer(i + 1, null, null, 1000, null);
-                                    Console.WriteLine("New computer: " + Computers[i].Id);// + " " + Computers[i].Ram);
-                                                                                          //break; 
-                                    break;                                                    // getting a rid of break so there will be just created all instances of Computer object in whole array.
-                                                                                              // doing this because instruction #8 says:
-                                                                                              /* If the array does not yet have a computer at that location, you should return the information about your Prototype computer,
-                                                                                               regardless of whether or not the user has specified their own prototype*/
 
+                                    Computers[i] = new Computer(i + 1, null, null, 1000, null);
+                                    Console.WriteLine("New computer: " + Computers[i].Id);
+                                    break;
                                 }
                             }
                         }
 
                         break;
                     case 2:
-                        
+
                         Console.WriteLine("Enter the id of computer:");
                         int id = Convert.ToInt32(Console.ReadLine());
 
@@ -119,17 +115,17 @@ namespace Asgn_02
                             antenna = bool.Parse(input);
                             Computers[id - 1].Antenna = antenna;
                         }
-                        
+
 
                         Console.WriteLine("Storage capacity? Enter null to skip or enter the size of SSD/HDD");
                         input = Console.ReadLine();
-                        if (input=="null")
+                        if (input == "null")
                         {
                             Computers[id - 1].StorageCapacity = null;
                         }
                         else {
-                                storage_capacity = double.Parse(input);
-                                Computers[id - 1].StorageCapacity = storage_capacity;
+                            storage_capacity = double.Parse(input);
+                            Computers[id - 1].StorageCapacity = storage_capacity;
                         }
 
 
@@ -137,25 +133,31 @@ namespace Asgn_02
                         Console.WriteLine("RAM. Must be >= 1000");
                         ram = Convert.ToInt32(Console.ReadLine());
                         Computers[id - 1].Ram = ram;
+                        if (ram < 1000)
+                        {
+                            Console.WriteLine("RAM was set to 1000");
+                        }
 
 
                         Console.WriteLine("Extra software? Enter null to skip this option or " +
                             "1 to procedure");
                         input = Console.ReadLine();
-                        if (input=="null")
+                        if (input == "null")
                         {
                             Computers[id - 1].Software = null;
                         }
                         else
                         {
-                                sizeS = int.Parse(input);
-                                Computers[id - 1].Software = new int?[5];
-                                for (int i = 0; i< Computers[id-1].Software.Length; i++)
-                                {
-                                Console.WriteLine("How many licences would you like for" +
+                            sizeS = int.Parse(input);
+                            Computers[id - 1].Software = new int?[5];
+                            for (int i = 0; i < Computers[id - 1].Software.Length; i++)
+                            {
+                                Console.WriteLine("How many licences would you like for " +
                                     "Software {0}? Enter 0 if you don't want to purchase any licenses or " +
                                     "null to skip the installation", (i));
                                 input = Console.ReadLine();
+
+                                //Computers[id - 1].Software[i] = soft??null;
                                 if (input == "null")
                                 {
                                     Computers[id - 1].Software[i] = null;
@@ -165,21 +167,20 @@ namespace Asgn_02
                                     soft = int.Parse(input);
                                     Computers[id - 1].Software[i] = soft;
                                 }
-                                
-                                }
 
+                            }
                         }
-                     
+
                         break;
 
                     case 3:
                         Console.WriteLine("Enter the id of computer:");
                         id = Convert.ToInt32(Console.ReadLine());
 
-                        if(Computers[id-1] != null)
+                        if (Computers[id - 1] != null)
                         {
                             Computers[id - 1] = null;
-                            Console.WriteLine(id+" was deleted");
+                            Console.WriteLine(id + " was deleted");
                         }
                         else
                             Console.WriteLine("Not existing computer");
@@ -196,6 +197,10 @@ namespace Asgn_02
                         }
                         else
                             Console.WriteLine("Result false, amount of cloud storage was exceeded");
+
+                        Console.WriteLine(DoubleIntNotPastMax(ref CloudStorage, maxCU, cloudUpgrade) ?
+                        "True. The amount is less than 16000" :
+                        "Result false, amount of cloud storage was exceeded");
 
                         break;
 
@@ -243,34 +248,55 @@ namespace Asgn_02
                         id = Convert.ToInt32(Console.ReadLine());
                         if (Computers[id - 1] == null)
                         {
-                            Computers[id-1] = new Computer(id, false, 500, 8000, null);
+                            Computers[id - 1] = new Computer(id, false, 500, 8000, null);
                             Console.WriteLine(Computers[id - 1].ToString());
                         }
-                        else Console.WriteLine(Computers[id-1].ToString());
+                        else Console.WriteLine(Computers[id - 1].ToString());
 
                         break;
 
                     case 9:
                         var rm = Computers.Where(y => y != null).Select(r => r.Ram).ToList();
-                        Console.WriteLine("Average RAM "+ rm.Average().ToString());
+                        Console.WriteLine("Average RAM: " + rm.Average().ToString());
 
                         var ca = Computers.Where(y => y != null).Select(r => r.Antenna).ToList();
                         ca.RemoveAll(y => y == null);
-                        yesAntenna = ca.Where(c =>(bool) c).Count();
+                        yesAntenna = ca.Where(c => (bool)c).Count();
                         noAntenna = ca.Where(c => !(bool)c).Count();
                         Console.WriteLine("Amount of installed antennas {0}\nNot installed antennas {1}", yesAntenna, noAntenna);
-                        percent = (yesAntenna / ca.Count) * 100;
+                        noAntenna = (int)(0.5f + ((100f * noAntenna) / ca.Count()));
+                        percent = 100 - noAntenna;
                         Console.WriteLine("Percentage of installed antennas: %{0}", percent);
 
                         var hd = Computers.Where(y => y != null).Select(l => l.StorageCapacity).ToList();
-                        Console.WriteLine("Average Hard Drive Capacity " + hd.Average().ToString());
+                        Console.WriteLine("Average Hard Drive Capacity: " + hd.Average().ToString());
 
-                        //picking new list with for software arrays of computers where software array was not null
-                        var aS =Computers.Where(y => y != null).Select(l => l.Software).ToList();
+                        //picking new list with for software arrays of computers where software array was not null.
+                        // not sure if it's necessary and I think there should be a more efficient way, but I wanted to use linq. 
+                        var aS = Computers.Where(y => y != null).Select(l => l.Software).ToList();
+                        aS.RemoveAll(y => y == null); // Necessary to to this since aS list still contains nulls 
+                        int totalLicensed = 0;
+                        for (int i = 0; i < aS.Count(); i++)
+                        {
+                            var licensed = from n in aS[i]
+                                           where n > 0
+                                           select n;
+                            totalLicensed += (int)licensed.Sum();
+                        }
+                        if (aS.Count() > 0)
+                        {
+                            Console.WriteLine("Average Licensed Software for all programs: " + totalLicensed / aS.Count);
+                        }
+                        else
+                            Console.WriteLine("No Licensed Programs found");
+                        for (int i = 0; i < aS.Count(); i++)
+                        {
 
-                     //   Console.WriteLine("Average Software " +aS.Average());
+                        }
 
-                        Console.WriteLine("Cloud Storage {0}\nNetwork Speed {1}", CloudStorage, NetworkSpeed);
+
+
+                            Console.WriteLine("Cloud Storage {0}\nNetwork Speed {1}", CloudStorage, NetworkSpeed);
                         break;
 
                     case 10:

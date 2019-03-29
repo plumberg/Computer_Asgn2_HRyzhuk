@@ -73,8 +73,8 @@ namespace Asgn_02
                 if (software != null)
                 {
 
-                 int softCount = software.Count(r => r> 0);
-                    for (int i = 0; i < softCount; i++) ;
+                 /*int softCount = software.Count(r => r> 0);
+                    for (int i = 0; i < softCount; i++) ;*/
                     for (int i =0; i< software.Length; i++)
                     {
                         if (software[i] > 0)
