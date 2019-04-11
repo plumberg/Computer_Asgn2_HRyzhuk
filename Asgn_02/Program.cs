@@ -40,9 +40,8 @@ namespace Asgn_02
             int ram;
             int sizeS, soft;
             int start, end;
-            int yesAntenna;
-            int noAntenna;
-            double percent;
+
+
 
             do
             {
@@ -191,13 +190,7 @@ namespace Asgn_02
                         int maxCU = 16000;
                         Console.WriteLine("Set to max? true or false");
                         bool cloudUpgrade = Convert.ToBoolean(Console.ReadLine());
-                        if (DoubleIntNotPastMax(ref CloudStorage, maxCU, cloudUpgrade))
-                        {
-                            Console.WriteLine("True. The amount is less than 16000");
-                        }
-                        else
-                            Console.WriteLine("Result false, amount of cloud storage was exceeded");
-
+                        //using syntactic sugar
                         Console.WriteLine(DoubleIntNotPastMax(ref CloudStorage, maxCU, cloudUpgrade) ?
                         "True. The amount is less than 16000" :
                         "Result false, amount of cloud storage was exceeded");
@@ -209,38 +202,27 @@ namespace Asgn_02
                         int minCU = 500;
                         Console.WriteLine("Set to min? true or false");
                         bool cloudDowngrade = Convert.ToBoolean(Console.ReadLine());
-                        if (HalveValueNotPastMin(ref CloudStorage, minCU, cloudDowngrade))
-                        {
-                            Console.WriteLine("Cloud Storage was downgraded by /2");
-                        }
-                        else
-                            Console.WriteLine("False result");
+                        Console.WriteLine(HalveValueNotPastMin(ref CloudStorage, minCU, cloudDowngrade) ?
+                            "Cloud Storage was downgraded by /2" :
+                            "False result");
                         break;
 
                     case 6:
                         int maxNS = 250000;
                         Console.WriteLine("Set to max? true or false");
                         bool networkUpgrade = Convert.ToBoolean(Console.ReadLine());
-                        if (DoubleIntNotPastMax(ref NetworkSpeed, maxNS, networkUpgrade))
-                        {
-                            Console.WriteLine("True. The amount is less than 250000");
-                        }
-                        else
-                            Console.WriteLine("Result false, amount was exceeded");
-
+                            Console.WriteLine(DoubleIntNotPastMax(ref NetworkSpeed, maxNS, networkUpgrade)?
+                                "True. The amount is less than 250000":
+                                "Result false, amount was exceeded");
                         break;
 
                     case 7:
                         int minNS = 10000;
                         Console.WriteLine("Set to min? true or false");
                         bool networkDowngrade = Convert.ToBoolean(Console.ReadLine());
-                        if (HalveValueNotPastMin(ref NetworkSpeed, minNS, networkDowngrade))
-                        {
-                            Console.WriteLine("Network Speed was downgraded by /2");
-                        }
-                        else
-                            Console.WriteLine("False result");
-
+                            Console.WriteLine(HalveValueNotPastMin(ref NetworkSpeed, minNS, networkDowngrade)?
+                                "Network Speed was downgraded by /2":
+                                "False result");
                         break;
 
                     case 8:
@@ -256,47 +238,37 @@ namespace Asgn_02
                         break;
 
                     case 9:
-                        var rm = Computers.Where(y => y != null).Select(r => r.Ram).ToList();
-                        Console.WriteLine("Average RAM: " + rm.Average().ToString());
+                        if (!Computers.Contains(null))
+                        {
+                            /*RAM info:*/
+                            var rm = Computers.Where(y => y != null).Select(r => r.Ram).ToList();
+                            Console.WriteLine("Average RAM: " + rm.Average().ToString());
+                            
+                            /*Antennas info*/
+                            var ca = Computers.Where(y => y != null).Select(r => r.Antenna).ToList();
+                            AntennasInfo(ca);                
 
-                        var ca = Computers.Where(y => y != null).Select(r => r.Antenna).ToList();
-                        ca.RemoveAll(y => y == null);
-                        yesAntenna = ca.Where(c => (bool)c).Count();
-                        noAntenna = ca.Where(c => !(bool)c).Count();
-                        Console.WriteLine("Amount of installed antennas {0}\nNot installed antennas {1}", yesAntenna, noAntenna);
-                        noAntenna = (int)(0.5f + ((100f * noAntenna) / ca.Count()));
-                        percent = 100 - noAntenna;
-                        Console.WriteLine("Percentage of installed antennas: %{0}", percent);
+                            /*Hard drive info:*/
+                            var hd = Computers.Where(y => y != null).Select(l => l.StorageCapacity).ToList();
+                            Console.WriteLine("Average Hard Drive Capacity: " + hd.Average().ToString());
+                        }
+                        else Console.WriteLine("No computers were added");
 
-                        var hd = Computers.Where(y => y != null).Select(l => l.StorageCapacity).ToList();
-                        Console.WriteLine("Average Hard Drive Capacity: " + hd.Average().ToString());
-
+                        /*Next, Software info:*/
                         //picking new list with for software arrays of computers where software array was not null.
-                        // not sure if it's necessary and I think there should be a more efficient way, but I wanted to use linq. 
+                        //not sure if it's necessary and I think there should be a more efficient way, but I wanted to use linq. 
                         var aS = Computers.Where(y => y != null).Select(l => l.Software).ToList();
-                        aS.RemoveAll(y => y == null); // Necessary to to this since aS list still contains nulls 
-                        int totalLicensed = 0;
-                        for (int i = 0; i < aS.Count(); i++)
-                        {
-                            var licensed = from n in aS[i]
-                                           where n > 0
-                                           select n;
-                            totalLicensed += (int)licensed.Sum();
-                        }
-                        if (aS.Count() > 0)
-                        {
-                            Console.WriteLine("Average Licensed Software for all programs: " + totalLicensed / aS.Count);
-                        }
-                        else
-                            Console.WriteLine("No Licensed Programs found");
-                        for (int i = 0; i < aS.Count(); i++)
-                        {
-
-                        }
+                        SoftwareAllAverageInfo(aS);
 
 
+                        /*Average number of licenses for each individual program on machines where that
+                        program is installed.
+                        For program 1, find all machines where it is installed and get the average number of licenses. 
+                        Repeat for program 2*/
+                        SoftwareInfoForEachPr(aS);
+                        
 
-                            Console.WriteLine("Cloud Storage {0}\nNetwork Speed {1}", CloudStorage, NetworkSpeed);
+                        Console.WriteLine("Cloud Storage {0}\nNetwork Speed {1}", CloudStorage, NetworkSpeed);
                         break;
 
                     case 10:
@@ -308,10 +280,11 @@ namespace Asgn_02
                         start = Convert.ToInt32(Console.ReadLine());
                         Console.WriteLine("End at:");
                         end    = Convert.ToInt32(Console.ReadLine());
-                        int diff = end - start;
+                        int diff = end - start+1;
                         var newCompList = new Computer[diff].ToArray();
-                        Array.Copy(Computers, start, newCompList, 0, end-start+1);
+                        Array.Copy(Computers, start, newCompList, 0, diff);
                         // source,source-index,dest,dest-index,count
+
                         for (int i = 0; i < newCompList.Length; i++)
                         {
                             if (newCompList[i] == null)
@@ -325,17 +298,19 @@ namespace Asgn_02
                         Console.WriteLine("Average RAM " + nrm.Average().ToString());
 
                         var nca = newCompList.Where(y => y != null).Select(r => r.Antenna).ToList();
-                        nca.RemoveAll(y => y == null);
-                        yesAntenna = nca.Where(c => (bool)c).Count();
-                        noAntenna = nca.Where(c => !(bool)c).Count();
-                        Console.WriteLine("Amount of installed antennas {0}\nNot installed antennas {1}", yesAntenna, noAntenna);
-                        percent = (yesAntenna / nca.Count) * 100;
-                        Console.WriteLine("Percentage of installed antennas: %{0}", percent);
+                        AntennasInfo(nca);
 
                         var nhd = newCompList.Where(y => y != null).Select(l => l.StorageCapacity).ToList();
                         Console.WriteLine("Average Hard Drive Capacity " + nhd.Average().ToString());
-                        // Console.WriteLine("Average Software " + Computers.Select(a => a.Software).Average().ToString());
 
+                        /*Software info for all average*/
+                        var aS2 = newCompList.Where(y => y != null).Select(l => l.Software).ToList();
+                        SoftwareAllAverageInfo(aS2);
+
+                        /*Software info per each program*/
+                        SoftwareInfoForEachPr(aS2);
+
+                        /*Storage and Speed info*/
                         Console.WriteLine("Cloud Storage {0}\nNetwork Speed {1}", CloudStorage, NetworkSpeed);
                         break;
                     default:
@@ -345,6 +320,69 @@ namespace Asgn_02
             } while (num != 0);
         }
 
+        private static void SoftwareInfoForEachPr(List<int?[]> aS)
+        {
+            int licensedPerEach, computersWithSoft, aver;
+            //each software loop (total 5)
+            for (int i = 0; i < 5; i++)
+            {
+                licensedPerEach = 0;
+                computersWithSoft = 0;
+                aver = 0;
+
+                //each computer with not null software array loop
+                for (int y = 0; y < aS.Count(); y++)
+                {
+                    // Console.WriteLine("Program 1 foe each computer: {0}",aS[y].ElementAt(i));
+                    if (aS[y].ElementAt(i) > 0)
+                    {
+                        licensedPerEach += (int)aS[y].ElementAt(i);
+                        computersWithSoft++;
+                    }
+                    else continue;
+                }
+                if (computersWithSoft > 0)
+                {
+                    aver = licensedPerEach / computersWithSoft;
+                    Console.WriteLine("Software {0} average: {1}", i + 1, aver);
+                }
+                else Console.WriteLine("No Licences for Software {0} found", i + 1);
+            }
+        }
+
+        private static void SoftwareAllAverageInfo(List<int?[]> aS)
+        {
+            aS.RemoveAll(y => y == null); // Necessary to do this since aS list still contains nulls 
+            int totalLicensed = 0;
+            for (int i = 0; i < aS.Count(); i++)
+            {
+                var licensed = from n in aS[i]
+                               where n > 0
+                               select n;
+
+                totalLicensed += (int)licensed.Sum();
+            }
+            if (aS.Count() > 0)
+            {
+                Console.WriteLine("Average Licensed Software for all programs: " + totalLicensed / aS.Count);
+            }
+            else
+                Console.WriteLine("No Licensed Programs found");
+        }
+
+        private static void AntennasInfo(List<bool?> ca)
+        {
+            double percent;
+            int yesAntenna;
+            int noAntenna;
+            ca.RemoveAll(y => y == null);
+            yesAntenna = ca.Where(c => (bool)c).Count();
+            noAntenna = ca.Where(c => !(bool)c).Count();
+            Console.WriteLine("Amount of installed antennas {0}\nNot installed antennas {1}", yesAntenna, noAntenna);
+            noAntenna = (int)(0.5f + ((100f * noAntenna) / ca.Count()));
+            percent = 100 - noAntenna;
+            Console.WriteLine("Percentage of installed antennas: %{0}", percent);
+        }
 
         public static bool GetIntFromUser(ref int num, int min, int max, int defaultVal)
         {
