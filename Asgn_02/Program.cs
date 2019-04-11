@@ -41,8 +41,6 @@ namespace Asgn_02
             int sizeS, soft;
             int start, end;
 
-
-
             do
             {
                 Console.WriteLine("==========MENU==========\n" +
@@ -87,9 +85,10 @@ namespace Asgn_02
                                 {
                                     //The way of implementing depends on constructor in Computer
                                     // Computers[i] = new Computer(i + 1, null, null, 1000, null);
-
+                                    
                                     Computers[i] = new Computer(i + 1, null, null, 1000, null);
                                     Console.WriteLine("New computer: " + Computers[i].Id);
+                                    //no break; if we want to add only one default computer
                                     break;
                                 }
                             }
@@ -242,7 +241,7 @@ namespace Asgn_02
                         {
                             /*RAM info:*/
                             var rm = Computers.Where(y => y != null).Select(r => r.Ram).ToList();
-                            Console.WriteLine("Average RAM: " + rm.Average().ToString());
+                            Console.WriteLine("Average RAM: " + string.Format("{0:N4}", rm.Average()));
                             
                             /*Antennas info*/
                             var ca = Computers.Where(y => y != null).Select(r => r.Antenna).ToList();
@@ -250,7 +249,7 @@ namespace Asgn_02
 
                             /*Hard drive info:*/
                             var hd = Computers.Where(y => y != null).Select(l => l.StorageCapacity).ToList();
-                            Console.WriteLine("Average Hard Drive Capacity: " + hd.Average().ToString());
+                            Console.WriteLine("Average Hard Drive Capacity: " + string.Format("{0:N6}", hd.Average()));
                         }
                         else Console.WriteLine("No computers were added");
 
@@ -274,12 +273,16 @@ namespace Asgn_02
                     case 10:
                         //Here, I'm counting all Computers array length since the instructions say to include 
                         //prototype computer info if there is no user's computer info was entered
+              
                         Console.WriteLine("Please specify an ARRAY start and stop index (between 0 and {0})" +
                             "of computers you would like to retrieve info from", Computers.Length-1);
                         Console.WriteLine("Start from:");
                         start = Convert.ToInt32(Console.ReadLine());
-                        Console.WriteLine("End at:");
-                        end    = Convert.ToInt32(Console.ReadLine());
+                        do
+                        {
+                            Console.WriteLine("End at:");
+                            end = Convert.ToInt32(Console.ReadLine());
+                        } while (end > Computers.Length-1 || end < start);
                         int diff = end - start+1;
                         var newCompList = new Computer[diff].ToArray();
                         Array.Copy(Computers, start, newCompList, 0, diff);
@@ -295,13 +298,13 @@ namespace Asgn_02
                         }
 
                         var nrm = newCompList.Where(y => y != null).Select(r => r.Ram).ToList();
-                        Console.WriteLine("Average RAM " + nrm.Average().ToString());
+                        Console.WriteLine("Average RAM " + string.Format("{0:N4}", nrm.Average()));
 
                         var nca = newCompList.Where(y => y != null).Select(r => r.Antenna).ToList();
                         AntennasInfo(nca);
 
                         var nhd = newCompList.Where(y => y != null).Select(l => l.StorageCapacity).ToList();
-                        Console.WriteLine("Average Hard Drive Capacity " + nhd.Average().ToString());
+                        Console.WriteLine("Average Hard Drive Capacity " +string.Format("{0:N6}", nhd.Average()));
 
                         /*Software info for all average*/
                         var aS2 = newCompList.Where(y => y != null).Select(l => l.Software).ToList();
@@ -333,7 +336,6 @@ namespace Asgn_02
                 //each computer with not null software array loop
                 for (int y = 0; y < aS.Count(); y++)
                 {
-                    // Console.WriteLine("Program 1 foe each computer: {0}",aS[y].ElementAt(i));
                     if (aS[y].ElementAt(i) > 0)
                     {
                         licensedPerEach += (int)aS[y].ElementAt(i);
@@ -352,7 +354,7 @@ namespace Asgn_02
 
         private static void SoftwareAllAverageInfo(List<int?[]> aS)
         {
-            aS.RemoveAll(y => y == null); // Necessary to do this since aS list still contains nulls 
+            aS.RemoveAll(y => y == null); // Necessary to do this since "aS" list still contains nulls 
             int totalLicensed = 0;
             for (int i = 0; i < aS.Count(); i++)
             {
