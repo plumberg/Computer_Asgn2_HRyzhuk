@@ -28,7 +28,7 @@ namespace Asgn_02
             num = Convert.ToInt32(Console.ReadLine());
             if(!GetIntFromUser(ref num, 5, 20, 10))
             {
-                Console.WriteLine("Wrong amount entered. The defaust amount 10 was set");
+                Console.WriteLine("Invalid number. The amount was set to 10.");
             }
         }
 
@@ -95,13 +95,12 @@ namespace Asgn_02
                         }
 
                         break;
-                    case 2:
 
+                    case 2:
                         Console.WriteLine("Enter the id of computer:");
                         int id = Convert.ToInt32(Console.ReadLine());
 
-                        //Suppose user enters id of existing computer correctly 
-
+                        //Suppose user enters id of existing computer correctly (Otherwise we could put an if statement to validate the id)
                         Console.WriteLine("Antenna to be added? true/false or null to skip");
                         input = Console.ReadLine();
                         if (input == "null")
@@ -187,41 +186,43 @@ namespace Asgn_02
 
                     case 4:
                         int maxCU = 16000;
-                        Console.WriteLine("Set to max? true or false");
-                        bool cloudUpgrade = Convert.ToBoolean(Console.ReadLine());
-                        //using syntactic sugar
-                        Console.WriteLine(DoubleIntNotPastMax(ref CloudStorage, maxCU, cloudUpgrade) ?
-                        "True. The amount is less than 16000" :
-                        "Result false, amount of cloud storage was exceeded");
-
-                        break;
-
+                        /*Console.WriteLine("Set to maximum amount? true or false");
+                        bool cloudUpgrade = Convert.ToBoolean(Console.ReadLine());*/
+                        bool cloudUpgrade = false;
+                       //using syntactic sugar
+                            Console.WriteLine(DoubleIntNotPastMax(ref CloudStorage, maxCU, cloudUpgrade) ?
+                            $"Positive result. The new amount is {CloudStorage}" :
+                            $"The amount of cloud storage stay the same since it would exceed 16000. Result is {CloudStorage}.");
+                            break;
 
                     case 5:
                         int minCU = 500;
-                        Console.WriteLine("Set to min? true or false");
-                        bool cloudDowngrade = Convert.ToBoolean(Console.ReadLine());
-                        Console.WriteLine(HalveValueNotPastMin(ref CloudStorage, minCU, cloudDowngrade) ?
-                            "Cloud Storage was downgraded by /2" :
-                            "False result");
+                        /*Console.WriteLine("Set to minimum amount in case of under limit? true or false");
+                        bool cloudDowngrade = Convert.ToBoolean(Console.ReadLine());*/
+                        bool cloudDowngrade = true;
+                            Console.WriteLine(HalveValueNotPastMin(ref CloudStorage, minCU, cloudDowngrade) ?
+                            $"Cloud Storage was downgraded by /2. The result is {CloudStorage}" :
+                            $"Cannot be downgraded.The cloud storage was set to {minCU}.");
                         break;
 
                     case 6:
                         int maxNS = 250000;
-                        Console.WriteLine("Set to max? true or false");
-                        bool networkUpgrade = Convert.ToBoolean(Console.ReadLine());
-                            Console.WriteLine(DoubleIntNotPastMax(ref NetworkSpeed, maxNS, networkUpgrade)?
-                                "True. The amount is less than 250000":
-                                "Result false, amount was exceeded");
+                        /*Console.WriteLine("Set to maximum speed in case of exceeding? true or false");
+                        bool networkUpgrade = Convert.ToBoolean(Console.ReadLine());*/
+                        bool networkUpgrade = true;
+                            Console.WriteLine(DoubleIntNotPastMax(ref NetworkSpeed, maxNS, networkUpgrade) ?
+                            $"True. The new network is {NetworkSpeed}" :
+                            $"The amount was exceeded. It was set to {maxNS}.");
                         break;
 
                     case 7:
                         int minNS = 10000;
-                        Console.WriteLine("Set to min? true or false");
-                        bool networkDowngrade = Convert.ToBoolean(Console.ReadLine());
+                        /*Console.WriteLine("Set to min? true or false");
+                        bool networkDowngrade = Convert.ToBoolean(Console.ReadLine());*/
+                        bool networkDowngrade = false;
                             Console.WriteLine(HalveValueNotPastMin(ref NetworkSpeed, minNS, networkDowngrade)?
-                                "Network Speed was downgraded by /2":
-                                "False result");
+                             $"Network Speed was downgraded by /2. The result is {NetworkSpeed}":
+                             $"Halving cause the result below 10000. The speed was not changed.\nCurrent network speed is {NetworkSpeed}");
                         break;
 
                     case 8:
@@ -390,7 +391,6 @@ namespace Asgn_02
         {
             if (num < min || num > max)
             {
-                Console.WriteLine("Invalid number. The amount was set to 10.");
                 Computers = new Computer[defaultVal];
                 return false;
             }
